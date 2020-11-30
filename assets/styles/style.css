@@ -231,11 +231,16 @@ body {
 }
 
 .works .works-content h2 {
+  color: white;
   font-size: 2em;
 }
 
 .works .works-content p {
   text-align: justify;
+}
+
+.works .works-content a {
+  color: white;
 }
 
 .works .works-image {
