@@ -1,0 +1,40 @@
+.works {
+  height: 100vh;
+  width: 100vw;
+  background-color: black;
+  display: flex;
+  padding: 4rem 5%;
+  gap: 1rem;
+
+  .works-content {
+    flex: 1;
+    color: white;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    h4,
+    h2 {
+      font-weight: 600;
+    }
+    h4 {
+      color: $primary;
+    }
+    h2 {
+      font-size: 2em;
+    }
+    p {
+      text-align: justify;
+    }
+  }
+  .works-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: scale-down;
+    }
+  }
+}
