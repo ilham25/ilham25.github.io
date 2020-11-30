@@ -1,0 +1,42 @@
+.skills {
+  position: relative;
+  height: 50vh;
+  width: 100vw;
+  background-color: $grey;
+
+  .card-container {
+    height: 100%;
+    width: 90%;
+    position: absolute;
+    left: 50%;
+    bottom: -2rem;
+    display: flex;
+    gap: 2rem;
+    transform: translateX(-50%);
+    .card {
+      height: 100%;
+      width: 100%;
+      background-color: white;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 2rem;
+      img {
+        height: 30%;
+        width: 30%;
+      }
+      .basic-web-logo {
+        width: 70%;
+      }
+      .skills-description {
+        h3 {
+          font-weight: 600;
+        }
+        color: $darkGrey;
+        text-align: center;
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+.hero {
+  height: 100vh;
+  width: 100vw;
+
+  background-color: black;
+  display: flex;
+
+  .me-bw {
+    flex: 1;
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      object-position: bottom;
+      opacity: 0.5;
+    }
+  }
+  .description {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+
+    .hero-header {
+      flex-basis: 10%;
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 1rem;
+      margin-right: 5%;
+      align-items: center;
+
+      svg {
+        fill: white;
+      }
+    }
+    .hero-content {
+      color: white;
+      flex-basis: 90%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      span {
+        color: $primary;
+      }
+      p {
+        font-size: 2em;
+      }
+      h1 {
+        font-weight: normal;
+        font-size: 5em;
+      }
+      h3 {
+        font-weight: normal;
+        font-size: 3em;
+      }
+      .cta-container {
+        display: flex;
+        gap: 2rem;
+        margin-top: 3rem;
+        a {
+          border: 3px solid white;
+          border-radius: 500px;
+          padding: 0.5rem 3rem;
+          color: white;
+          font-size: 1.5em;
+          transition: all 0.25s ease;
+          &:hover {
+            background-color: white;
+            color: black;
+          }
+        }
+      }
+    }
+  }
+}
