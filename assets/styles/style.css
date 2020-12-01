@@ -302,6 +302,7 @@ body {
   display: flex;
   gap: 1rem;
 }
+<<<<<<< HEAD
 
 @media screen and (max-width: 1024px) {
   .hero {
@@ -510,4 +511,6 @@ body {
     gap: 1rem;
   }
 }
+=======
+>>>>>>> parent of 28e75bb (styling mobile view)
 /*# sourceMappingURL=style.css.map */
