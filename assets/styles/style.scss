@@ -19,28 +19,10 @@ body {
 @import "./hero";
 @import "./skills";
 @import "./works";
+@import "./hire";
 
-.hire {
-  height: 50vh;
-  width: 100vw;
-  background-color: $grey;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  h2 {
-    font-size: 4em;
-    color: $darkGrey;
-    font-weight: 600;
-  }
-  h3 {
-    font-size: 2em;
-    font-weight: 500;
-  }
-  .social-media {
-    margin-top: 1rem;
-    display: flex;
-    gap: 1rem;
-  }
+@media screen and (max-width: 1024px) {
+  @import "./mobile/hero";
+  @import "./mobile/skills";
+  @import "./mobile/hire";
 }
