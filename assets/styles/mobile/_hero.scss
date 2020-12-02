@@ -1,37 +1,43 @@
 .hero {
   height: 100vh;
   width: 100vw;
-  position: relative;
-  background-color: black;
 
+  background-color: black;
+  // display: flex;
+  position: relative;
   .me-bw {
+    z-index: 0;
     height: 100%;
     width: 100%;
-    z-index: 0;
+    // flex: 1;
     img {
       height: 100%;
       width: 100%;
       object-fit: cover;
       object-position: bottom;
-      opacity: 0.2;
+      opacity: 0.3;
     }
   }
   .description {
-    z-index: 1;
     position: absolute;
+    top: 0;
+    left: 0;
     height: 100%;
     width: 100%;
+
     display: flex;
     flex-direction: column;
+
     .hero-header {
       flex-basis: 10%;
       display: flex;
       flex-direction: row-reverse;
-      gap: 1rem;
+      gap: 0;
       margin-right: 0;
       align-items: center;
       justify-content: center;
       svg {
+        margin: 0 0.5rem;
         fill: white;
       }
     }
@@ -58,17 +64,18 @@
       }
       .cta-container {
         display: flex;
-        // gap: 1rem;
-        margin-top: 3rem;
         flex-direction: column;
+        gap: 0;
+        margin-top: 3rem;
         padding: 0 5rem;
         a {
           border: 2px solid white;
           border-radius: 500px;
-          padding: 0.5rem 0;
+          padding: 0.5rem 3rem;
           color: white;
-          transition: all 0.25s ease;
           font-size: 1em;
+          transition: all 0.25s ease;
+          margin: 0.5rem 0;
           &:hover {
             background-color: white;
             color: black;

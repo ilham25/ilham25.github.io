@@ -1,0 +1,48 @@
+.works {
+  height: 100vh;
+  width: 100vw;
+  background-color: black;
+  display: flex;
+  flex-direction: column-reverse;
+  padding: 4rem 5%;
+  // gap: 1rem;
+
+  .works-content {
+    flex: 1;
+    color: white;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    h4,
+    h2 {
+      font-weight: 600;
+    }
+    h4 {
+      color: $primary;
+    }
+    h2 {
+      color: white;
+      font-size: 2em;
+    }
+    p {
+      text-align: justify;
+    }
+    a {
+      color: white;
+    }
+  }
+  .works-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0;
+    margin-bottom: 1rem;
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: scale-down;
+    }
+  }
+}
