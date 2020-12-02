@@ -515,7 +515,7 @@ body {
     font-size: 2em;
   }
   .works .works-content p {
-    text-align: justify;
+    text-align: center;
   }
   .works .works-content a {
     color: white;
@@ -539,8 +539,8 @@ body {
   .works .works-image img {
     height: 100%;
     width: 100%;
-    -o-object-fit: scale-down;
-       object-fit: scale-down;
+    -o-object-fit: cover;
+       object-fit: cover;
   }
   .hire {
     height: 50vh;
