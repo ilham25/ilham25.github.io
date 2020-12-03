@@ -204,9 +204,6 @@ body {
 }
 
 .works .works-content {
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
   color: white;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -243,9 +240,6 @@ body {
 }
 
 .works .works-image {
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -259,6 +253,8 @@ body {
 }
 
 .works .works-image img {
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
   height: 100%;
   width: 100%;
   -o-object-fit: scale-down;
@@ -425,7 +421,7 @@ body {
   .skills .card-container {
     height: 100%;
     width: 100%;
-    bottom: 0;
+    position: static;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -435,10 +431,15 @@ body {
             flex-direction: column;
     gap: 0;
     padding: 1rem;
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
   }
   .skills .card-container .card {
-    height: 100%;
-    width: 100%;
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+    max-height: 100%;
+    max-width: 100%;
     background-color: white;
     border-radius: 20px;
     display: -webkit-box;
@@ -456,6 +457,7 @@ body {
             flex-direction: column;
     margin: 0.5rem 0;
     gap: 0;
+    padding: 1rem;
   }
   .skills .card-container .card img {
     height: 30%;
@@ -480,10 +482,6 @@ body {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: reverse;
-        -ms-flex-direction: column-reverse;
-            flex-direction: column-reverse;
     padding: 4rem 5%;
   }
   .works .works-content {
@@ -501,7 +499,6 @@ body {
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-    text-align: center;
   }
   .works .works-content h4,
   .works .works-content h2 {
@@ -515,7 +512,7 @@ body {
     font-size: 2em;
   }
   .works .works-content p {
-    text-align: center;
+    text-align: justify;
   }
   .works .works-content a {
     color: white;
@@ -533,14 +530,13 @@ body {
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-    margin-left: 0;
-    margin-bottom: 1rem;
+    margin-left: 1rem;
   }
   .works .works-image img {
     height: 100%;
     width: 100%;
-    -o-object-fit: cover;
-       object-fit: cover;
+    -o-object-fit: scale-down;
+       object-fit: scale-down;
   }
   .hire {
     height: 50vh;
