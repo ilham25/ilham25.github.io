@@ -355,6 +355,10 @@ This post covers how the engine handles execution order, the pluggable node syst
 <li>For each expression clear the braces, get evaluated with <code>vm.runInNewContext</code> and replace the expression inside the raw string.</li>
 <li>Lastly return the final expression that have been replaced by the actual data that get evaluated.</li>
 </ol>
+<h3 id="6-the-diamond-merge-pattern">6. The Diamond Merge Pattern<a hidden class="anchor" aria-hidden="true" href="#6-the-diamond-merge-pattern">#</a></h3>
+<p>Up until this point we only handle a regular workflow without a merging mechanism, but this is where things get tricky. What happens when an <code>if</code> node splits the flow into two branches (in this case a 2 <code>log</code> node) that get merged into a <code>merge</code> node:</p>
+<p><img alt="Diamond Merge" loading="lazy" src="/posts/workflow-engine-n8n-works/img/diamond-merge-pattern.png"></p>
+<p>The <code>merge</code> node has 2 input slots, how does it know which data belongs to which slot? This is where the <code>toInputIndex</code> property from <code>BaseNodeInput</code> the same interface we&rsquo;ve seen at <a href="#3-the-node-system">The Node System</a> come in handy. It&rsquo;s a number that tells the engine to which slot of it will end up at the destination node.</p>
 
 
   </div>

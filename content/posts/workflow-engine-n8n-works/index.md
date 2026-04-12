@@ -286,3 +286,11 @@ Basically it need the json item from node to use as a context and the raw expres
 1. Search all of the expressions inside the raw string
 2. For each expression clear the braces, get evaluated with `vm.runInNewContext` and replace the expression inside the raw string.
 3. Lastly return the final expression that have been replaced by the actual data that get evaluated.
+
+### 6. The Diamond Merge Pattern
+
+Up until this point we only handle a regular workflow without a merging mechanism, but this is where things get tricky. What happens when an `if` node splits the flow into two branches (in this case a 2 `log` node) that get merged into a `merge` node:
+
+![Diamond Merge](./img/diamond-merge-pattern.png)
+
+The `merge` node has 2 input slots, how does it know which data belongs to which slot? This is where the `toInputIndex` property from `BaseNodeInput` the same interface we've seen at [The Node System](#3-the-node-system) come in handy. It's a number that tells the engine to which slot of it will end up at the destination node.
