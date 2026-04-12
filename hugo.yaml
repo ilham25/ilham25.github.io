@@ -2,3 +2,13 @@ baseURL: https://example.org/
 locale: en-us
 title: Iruha25
 theme: ["PaperMod"]
+params:
+  assets:
+    disableHLJS: true
+markup:
+  highlight:
+    codeFences: true
+    guessSyntax: true
+    lineNos: false
+    noClasses: false # must be false to use external CSS
+    style: github-dark # your chosen Chroma theme

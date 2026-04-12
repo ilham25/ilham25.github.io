@@ -27,10 +27,6 @@ Basically every node has an **in-degree** which is the number of incoming connec
 
 ```ts
 const queue: NodeType[] = [];
-const nodeMap = nodes.reduce((acc, node) => {
-  acc.set(node.description.name, node);
-  return acc;
-}, new Map<string, NodeType>());
 const dependencies: Map<string, string[]> = new Map();
 
 // Set a map of dependencies for each node
