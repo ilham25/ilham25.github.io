@@ -5,6 +5,8 @@ theme: ["PaperMod"]
 params:
   assets:
     disableHLJS: true
+  footer:
+    text: "[GitHub](https://github.com/ilham25) · [LinkedIn](https://www.linkedin.com/in/ilham-adiputra)"
 markup:
   highlight:
     codeFences: true
