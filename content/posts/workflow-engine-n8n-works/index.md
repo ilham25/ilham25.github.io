@@ -12,6 +12,8 @@ cover:
 I've been using n8n for quite some time now and couldn't help wondering how it works under the hood, so I decided to build a minimal working version of the engine myself.
 This post covers how the engine handles execution order, the pluggable node system, expression evaluation, and the diamond merge pattern.
 
+You can find the full source code on [GitHub](https://github.com/ilham25/workflow-ts).
+
 ### 1. What is a Workflow Engine?
 
 Basically a workflow engine is just a graph where it has 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. These connections between nodes is what define the data flow.
