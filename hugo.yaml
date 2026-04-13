@@ -15,17 +15,17 @@ params:
     imageWidth: 120 # custom size
     imageHeight: 120 # custom size
     buttons:
-      - name: Posts
+      - name: Blog
         url: "/posts"
       - name: Resume
         url: "/resume.pdf"
-      - name: Github
-        url: "https://github.com/ilham25"
   label:
     icon: "/apple-touch-icon.png"
   socialIcons:
     - name: "LinkedIn"
       url: "https://www.linkedin.com/in/ilham-adiputra"
+    - name: "Github"
+      url: "https://github.com/ilham25"
     - name: "email"
       url: "mailto:job.ilhamadiputra4@gmail.com"
 
