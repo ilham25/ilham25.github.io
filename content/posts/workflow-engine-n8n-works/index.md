@@ -1,6 +1,6 @@
 ---
 date: "2026-04-11T14:55:52+07:00"
-draft: true
+draft: false
 title: "I Built a Minimal Workflow Engine to Understand How n8n Works Under the Hood"
 cover:
   image: "cover.png"
