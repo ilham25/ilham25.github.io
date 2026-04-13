@@ -3,6 +3,9 @@ locale: en-us
 title: Iruha Dev
 theme: ["PaperMod"]
 params:
+  description: "Iruha Dev — tech blog & personal site"
+  images:
+    - images/og-default.png
   profileMode:
     enabled: true
     title: "Ilham Adiputra" # optional default will be site title
