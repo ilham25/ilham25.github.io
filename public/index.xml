@@ -18,7 +18,12 @@
       <link>http://localhost:1313/posts/workflow-engine-n8n-works/</link>
       <pubDate>Sat, 11 Apr 2026 14:55:52 +0700</pubDate>
       <guid>http://localhost:1313/posts/workflow-engine-n8n-works/</guid>
-      <description>I built a minimal workflow engine in TypeScript from scratch — covering DAG execution with Kahn&amp;#39;s algorithm, pluggable nodes, sandboxed expression evaluation, and the diamond merge pattern.</description>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;ve been using n8n for quite some time now and couldn&amp;rsquo;t help wondering how it works under the hood, so I decided to build a minimal working version of the engine myself.
+This post covers how the engine handles execution order, the pluggable node system, expression evaluation, and the diamond merge pattern.&lt;/p&gt;
+&lt;p&gt;You can find the full source code on &lt;a href=&#34;https://github.com/ilham25/workflow-ts&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;what-is-a-workflow-engine&#34;&gt;What is a Workflow Engine?&lt;/h2&gt;
+&lt;p&gt;Basically a workflow engine is just a graph where it has 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. These connections between nodes is what define the data flow.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

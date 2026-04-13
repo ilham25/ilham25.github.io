@@ -7,7 +7,12 @@
 <meta name="robots" content="noindex, nofollow">
 <title>I Built a Minimal Workflow Engine to Understand How n8n Works Under the Hood | Iruha Dev</title>
 <meta name="keywords" content="">
-<meta name="description" content="I built a minimal workflow engine in TypeScript from scratch — covering DAG execution with Kahn&#39;s algorithm, pluggable nodes, sandboxed expression evaluation, and the diamond merge pattern.">
+<meta name="description" content="Introduction
+I&rsquo;ve been using n8n for quite some time now and couldn&rsquo;t help wondering how it works under the hood, so I decided to build a minimal working version of the engine myself.
+This post covers how the engine handles execution order, the pluggable node system, expression evaluation, and the diamond merge pattern.
+You can find the full source code on GitHub.
+What is a Workflow Engine?
+Basically a workflow engine is just a graph where it has 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. These connections between nodes is what define the data flow.">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/posts/workflow-engine-n8n-works/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.bea8d8a902aa99a3ef8d3bd4d7a11dce2dffbf643aaf6ca436aa5d86f52903c8.css" integrity="sha256-vqjYqQKqmaPvjTvU16Edzi3/v2Q6r2ykNqpdhvUpA8g=" rel="preload stylesheet" as="style">
@@ -70,7 +75,9 @@
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="Iruha Dev (Alt + H)">Iruha Dev</a>
+            <a href="http://localhost:1313/" accesskey="h" title="Iruha Dev (Alt + H)">
+                <img src="http://localhost:1313/apple-touch-icon.png" alt="" aria-label="logo"
+                    height="30">Iruha Dev</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -102,29 +109,59 @@
 
 <article class="post-single">
   <header class="post-header">
-    
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       I Built a Minimal Workflow Engine to Understand How n8n Works Under the Hood
     </h1>
-    <div class="post-description">
-      I built a minimal workflow engine in TypeScript from scratch — covering DAG execution with Kahn&#39;s algorithm, pluggable nodes, sandboxed expression evaluation, and the diamond merge pattern.
-    </div>
-    <div class="post-meta"><span title='2026-04-11 14:55:52 +0700 WIB'>April 11, 2026</span>
+    <div class="post-meta"><span title='2026-04-11 14:55:52 +0700 WIB'>April 11, 2026</span>&nbsp;·&nbsp;<span>10 min</span>
 
 </div>
   </header> 
 <figure class="entry-cover">
             <img loading="eager" src="http://localhost:1313/posts/workflow-engine-n8n-works/cover.png" alt="Workflow UI with nodes">
         
-</figure>
+</figure><div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#introduction" aria-label="Introduction">Introduction</a></li>
+                <li>
+                    <a href="#what-is-a-workflow-engine" aria-label="What is a Workflow Engine?">What is a Workflow Engine?</a></li>
+                <li>
+                    <a href="#execution-order-kahns-algorithm-introduction" aria-label="Execution Order: Kahn&rsquo;s Algorithm Introduction">Execution Order: Kahn&rsquo;s Algorithm Introduction</a></li>
+                <li>
+                    <a href="#the-node-system" aria-label="The Node System">The Node System</a></li>
+                <li>
+                    <a href="#the-data-pipeline" aria-label="The Data Pipeline">The Data Pipeline</a></li>
+                <li>
+                    <a href="#sandboxed-expression-evaluation" aria-label="Sandboxed Expression Evaluation">Sandboxed Expression Evaluation</a></li>
+                <li>
+                    <a href="#the-diamond-merge-pattern" aria-label="The Diamond Merge Pattern">The Diamond Merge Pattern</a></li>
+                <li>
+                    <a href="#wiring-it-all-together" aria-label="Wiring It All Together">Wiring It All Together</a></li>
+                <li>
+                    <a href="#what-i-learned" aria-label="What I Learned">What I Learned</a></li>
+                <li>
+                    <a href="#whats-next" aria-label="What&rsquo;s Next?">What&rsquo;s Next?</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
   <div class="post-content md-content"><h2 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h2>
 <p>I&rsquo;ve been using n8n for quite some time now and couldn&rsquo;t help wondering how it works under the hood, so I decided to build a minimal working version of the engine myself.
 This post covers how the engine handles execution order, the pluggable node system, expression evaluation, and the diamond merge pattern.</p>
-<h3 id="1-what-is-a-workflow-engine">1. What is a Workflow Engine?<a hidden class="anchor" aria-hidden="true" href="#1-what-is-a-workflow-engine">#</a></h3>
+<p>You can find the full source code on <a href="https://github.com/ilham25/workflow-ts">GitHub</a>.</p>
+<h2 id="what-is-a-workflow-engine">What is a Workflow Engine?<a hidden class="anchor" aria-hidden="true" href="#what-is-a-workflow-engine">#</a></h2>
 <p>Basically a workflow engine is just a graph where it has 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. These connections between nodes is what define the data flow.</p>
 <p>At first I was working with a sample data that have a correct topological order (<code>node 1 -&gt; node 2 -&gt; node 3</code>), then come the issue when I try to randomize the node order (<code>node 3 -&gt; node 1 -&gt; node 2</code>) and this is the tricky part: <strong>the execution order</strong>. You cannot run a node before it’s dependencies have finished and passed their data forward, where in the original case <code>node 3</code> depends on <code>node 2</code> but at the second case the <code>node 2</code> is executed last and this doesn’t meet <code>node 3</code> requirements. That is a simple case, but what happens when you have branches, merges? Figuring out the correct order becomes important.</p>
 <p>That’s where Directed Acyclic Graph (DAG) concept comes in. Directed because connections always have a direction which is flows in one way and Acyclic because there are no loop because a node cannot eventually depend on itself (ex: <code>node 1 -&gt; node 2 -&gt; node 3 -&gt; node 1</code>).</p>
-<h3 id="2-execution-order-kahns-algorithm-introduction">2. Execution Order: Kahn&rsquo;s Algorithm Introduction<a hidden class="anchor" aria-hidden="true" href="#2-execution-order-kahns-algorithm-introduction">#</a></h3>
+<h2 id="execution-order-kahns-algorithm-introduction">Execution Order: Kahn&rsquo;s Algorithm Introduction<a hidden class="anchor" aria-hidden="true" href="#execution-order-kahns-algorithm-introduction">#</a></h2>
 <p>Once I knew what&rsquo;s the graph structure I decided to use, I needed to figure out how could I produce the correct order and this is where Kahn&rsquo;s algorithm comes in. <a href="https://www.youtube.com/watch?v=cIBFEhD77b4">I learn it from here.</a></p>
 <p>Basically every node has an <strong>in-degree</strong> which is the number of incoming connection it has, well let&rsquo;s call it dependencies. A node with 0 in-degree has no dependencies so it is safe to execute. Once a node is finished, we can add it into the correct topological order or queue and remove the dependency of other nodes to this node and the process is looped until all of the node has no dependency and get executed totally. Here&rsquo;s how I implement it:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">queue</span>: <span class="kt">NodeType</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
@@ -167,7 +204,7 @@ This post covers how the engine handles execution order, the pluggable node syst
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">return</span> <span class="p">{</span> <span class="nx">queue</span> <span class="p">};</span>
 </span></span></code></pre></div><p>The end result is a correct topological order/queue of nodes that safe to execute properly without worry of missing dependency.</p>
-<h3 id="3-the-node-system">3. The Node System<a hidden class="anchor" aria-hidden="true" href="#3-the-node-system">#</a></h3>
+<h2 id="the-node-system">The Node System<a hidden class="anchor" aria-hidden="true" href="#the-node-system">#</a></h2>
 <p>All node inside this engine must extend an interface called <code>BaseNodeType</code>. Basically this is how it&rsquo;s structured:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">interface</span> <span class="nx">BaseNodeType</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="nx">description</span>: <span class="kt">BaseNodeTypeDescription</span><span class="p">;</span>
@@ -265,7 +302,7 @@ This post covers how the engine handles execution order, the pluggable node syst
 </span></span><span class="line"><span class="cl">    <span class="nx">execute</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">  <span class="p">};</span>
 </span></span><span class="line"><span class="cl"><span class="p">};</span>
-</span></span></code></pre></div><h3 id="4-the-data-pipeline">4. The Data Pipeline<a hidden class="anchor" aria-hidden="true" href="#4-the-data-pipeline">#</a></h3>
+</span></span></code></pre></div><h2 id="the-data-pipeline">The Data Pipeline<a hidden class="anchor" aria-hidden="true" href="#the-data-pipeline">#</a></h2>
 <p>Every node inside the engine receives and returns data as <code>NodeExecutionData[][]</code>, it may look strange, but it has a reason why it&rsquo;s a 2D array.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="kr">interface</span> <span class="nx">NodeExecutionData</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="nx">json</span>: <span class="kt">object</span><span class="p">;</span>
@@ -309,7 +346,7 @@ This post covers how the engine handles execution order, the pluggable node syst
 </span></span><span class="line"><span class="cl">    <span class="p">},</span>
 </span></span><span class="line"><span class="cl">  <span class="p">]</span>
 </span></span><span class="line"><span class="cl"><span class="p">]</span>
-</span></span></code></pre></div><h3 id="5-sandboxed-expression-evaluation">5. Sandboxed Expression Evaluation<a hidden class="anchor" aria-hidden="true" href="#5-sandboxed-expression-evaluation">#</a></h3>
+</span></span></code></pre></div><h2 id="sandboxed-expression-evaluation">Sandboxed Expression Evaluation<a hidden class="anchor" aria-hidden="true" href="#sandboxed-expression-evaluation">#</a></h2>
 <p>One of the core features that I want to explore and support is the dynamic expression inside node parameters, for example a URL for <code>httpRequest</code> node:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">https://jsonplaceholder.typicode.com/users/{{ $json.id }}
 </span></span></code></pre></div><p>Where the <code>$json.id</code> get evaluated at runtime based on the input of the previous node. My first approach was <code>eval()</code>, which works but is considered dangerous because it has access to the entire runtime. I then tried the Function Constructor approach, which is safer since it only executes in the global scope with no access to local variables. But I wanted something more isolated, so I ended up using Node&rsquo;s <code>vm.runInNewContext</code>. Here&rsquo;s some references you can read about an approach to evaluate a JavaScript code:</p>
@@ -344,11 +381,11 @@ This post covers how the engine handles execution order, the pluggable node syst
 <li>For each expression clear the braces, get evaluated with <code>vm.runInNewContext</code> and replace the expression inside the raw string.</li>
 <li>Lastly return the final expression that have been replaced by the actual data that get evaluated.</li>
 </ol>
-<h3 id="6-the-diamond-merge-pattern">6. The Diamond Merge Pattern<a hidden class="anchor" aria-hidden="true" href="#6-the-diamond-merge-pattern">#</a></h3>
+<h2 id="the-diamond-merge-pattern">The Diamond Merge Pattern<a hidden class="anchor" aria-hidden="true" href="#the-diamond-merge-pattern">#</a></h2>
 <p>Up until this point we only handle a regular workflow without a merging mechanism, but this is where things get tricky. What happens when an <code>if</code> node splits the flow into two branches (in this case a 2 <code>log</code> node) that get merged into a <code>merge</code> node:</p>
 <p><img alt="Diamond Merge" loading="lazy" src="/posts/workflow-engine-n8n-works/img/diamond-merge-pattern.png"></p>
 <p>The <code>merge</code> node has 2 input slots, how does it know which data belongs to which slot? This is where the <code>toInputIndex</code> property from <code>BaseNodeInput</code> the same interface we&rsquo;ve seen at <a href="#3-the-node-system">The Node System</a> come in handy. It&rsquo;s a number that tells the engine to which slot of it will end up at the destination node.</p>
-<h3 id="7-wiring-it-all-together">7. Wiring It All Together<a hidden class="anchor" aria-hidden="true" href="#7-wiring-it-all-together">#</a></h3>
+<h2 id="wiring-it-all-together">Wiring It All Together<a hidden class="anchor" aria-hidden="true" href="#wiring-it-all-together">#</a></h2>
 <p>The engine itself is mostly just pure TypeScript logic and doesn&rsquo;t care how it gets triggered. To make it accessible to the frontend demo I wrapped it in an Express server. There are 2 core endpoints, the others is just for frontend need.</p>
 <ol>
 <li>Execute Workflow</li>
@@ -468,6 +505,53 @@ This post covers how the engine handles execution order, the pluggable node syst
         }
     })
 
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
 </script>
 </body>
 

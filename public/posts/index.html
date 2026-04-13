@@ -71,7 +71,9 @@
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="Iruha Dev (Alt + H)">Iruha Dev</a>
+            <a href="http://localhost:1313/" accesskey="h" title="Iruha Dev (Alt + H)">
+                <img src="http://localhost:1313/apple-touch-icon.png" alt="" aria-label="logo"
+                    height="30">Iruha Dev</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -100,7 +102,7 @@
     </nav>
 </header>
 <main class="main"> 
-<header class="page-header">
+<header class="page-header"><div class="breadcrumbs"><a href="http://localhost:1313/">Home</a></div>
   <h1>
     Posts
   </h1>
@@ -116,10 +118,11 @@
   </header>
   <div class="entry-content">
     <p>Introduction I’ve been using n8n for quite some time now and couldn’t help wondering how it works under the hood, so I decided to build a minimal working version of the engine myself. This post covers how the engine handles execution order, the pluggable node system, expression evaluation, and the diamond merge pattern.
-1. What is a Workflow Engine? Basically a workflow engine is just a graph where it has 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. These connections between nodes is what define the data flow.
+You can find the full source code on GitHub.
+What is a Workflow Engine? Basically a workflow engine is just a graph where it has 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. These connections between nodes is what define the data flow.
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-04-11 14:55:52 +0700 WIB'>April 11, 2026</span></footer>
+  <footer class="entry-footer"><span title='2026-04-11 14:55:52 +0700 WIB'>April 11, 2026</span>&nbsp;·&nbsp;<span>10 min</span></footer>
   <a class="entry-link" aria-label="post link to I Built a Minimal Workflow Engine to Understand How n8n Works Under the Hood" href="http://localhost:1313/posts/workflow-engine-n8n-works/"></a>
 </article>
     </main>

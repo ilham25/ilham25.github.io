@@ -21,12 +21,20 @@ params:
         url: "/resume.pdf"
       - name: Github
         url: "https://github.com/ilham25"
-
-  socialIcons: # optional
+  label:
+    icon: "/apple-touch-icon.png"
+  socialIcons:
     - name: "LinkedIn"
       url: "https://www.linkedin.com/in/ilham-adiputra"
     - name: "email"
       url: "mailto:job.ilhamadiputra4@gmail.com"
+
+  # Post Related
+  ShowToc: true
+  TocOpen: true
+  ShowBreadCrumbs: true
+  ShowReadingTime: true
+  ShowCodeCopyButtons: true
 
   assets:
     disableHLJS: true

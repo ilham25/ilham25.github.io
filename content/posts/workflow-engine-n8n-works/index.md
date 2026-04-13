@@ -14,7 +14,7 @@ This post covers how the engine handles execution order, the pluggable node syst
 
 You can find the full source code on [GitHub](https://github.com/ilham25/workflow-ts).
 
-### 1. What is a Workflow Engine?
+## What is a Workflow Engine?
 
 Basically a workflow engine is just a graph where it has 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. These connections between nodes is what define the data flow.
 
@@ -22,7 +22,7 @@ At first I was working with a sample data that have a correct topological order 
 
 That’s where Directed Acyclic Graph (DAG) concept comes in. Directed because connections always have a direction which is flows in one way and Acyclic because there are no loop because a node cannot eventually depend on itself (ex: `node 1 -> node 2 -> node 3 -> node 1`).
 
-### 2. Execution Order: Kahn's Algorithm Introduction
+## Execution Order: Kahn's Algorithm Introduction
 
 Once I knew what's the graph structure I decided to use, I needed to figure out how could I produce the correct order and this is where Kahn's algorithm comes in. [I learn it from here.](https://www.youtube.com/watch?v=cIBFEhD77b4)
 
@@ -72,7 +72,7 @@ return { queue };
 
 The end result is a correct topological order/queue of nodes that safe to execute properly without worry of missing dependency.
 
-### 3. The Node System
+## The Node System
 
 All node inside this engine must extend an interface called `BaseNodeType`. Basically this is how it's structured:
 
@@ -188,7 +188,7 @@ export const getNode: WorkflowNodeToNodeType = (workflow, node) => {
 };
 ```
 
-### 4. The Data Pipeline
+## The Data Pipeline
 
 Every node inside the engine receives and returns data as `NodeExecutionData[][]`, it may look strange, but it has a reason why it's a 2D array.
 
@@ -242,7 +242,7 @@ Basically here's how the data look like:
 ]
 ```
 
-### 5. Sandboxed Expression Evaluation
+## Sandboxed Expression Evaluation
 
 One of the core features that I want to explore and support is the dynamic expression inside node parameters, for example a URL for `httpRequest` node:
 
@@ -286,7 +286,7 @@ Basically it need the json item from node to use as a context and the raw expres
 2. For each expression clear the braces, get evaluated with `vm.runInNewContext` and replace the expression inside the raw string.
 3. Lastly return the final expression that have been replaced by the actual data that get evaluated.
 
-### 6. The Diamond Merge Pattern
+## The Diamond Merge Pattern
 
 Up until this point we only handle a regular workflow without a merging mechanism, but this is where things get tricky. What happens when an `if` node splits the flow into two branches (in this case a 2 `log` node) that get merged into a `merge` node:
 
@@ -294,7 +294,7 @@ Up until this point we only handle a regular workflow without a merging mechanis
 
 The `merge` node has 2 input slots, how does it know which data belongs to which slot? This is where the `toInputIndex` property from `BaseNodeInput` the same interface we've seen at [The Node System](#3-the-node-system) come in handy. It's a number that tells the engine to which slot of it will end up at the destination node.
 
-### 7. Wiring It All Together
+## Wiring It All Together
 
 The engine itself is mostly just pure TypeScript logic and doesn't care how it gets triggered. To make it accessible to the frontend demo I wrapped it in an Express server. There are 2 core endpoints, the others is just for frontend need.
 
