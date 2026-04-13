@@ -2,8 +2,10 @@
 date: "2026-04-11T14:55:52+07:00"
 draft: false
 title: "I Built a Minimal Workflow Engine to Understand How n8n Works Under the Hood"
+description: "I built a minimal workflow engine in TypeScript from scratch — covering DAG execution with Kahn's algorithm, pluggable nodes, sandboxed expression evaluation, and the diamond merge pattern."
 cover:
   image: "cover.png"
+  alt: "Workflow UI with nodes"
 ---
 
 ## Introduction

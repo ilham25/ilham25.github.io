@@ -4,6 +4,11 @@
     <title>Tags on Iruha Dev</title>
     <link>http://localhost:1313/tags/</link>
     <description>Recent content in Tags on Iruha Dev</description>
+    <image>
+      <title>Iruha Dev</title>
+      <url>http://localhost:1313/images/og-default.png</url>
+      <link>http://localhost:1313/images/og-default.png</link>
+    </image>
     <generator>Hugo</generator>
     <language>en-us</language>
     <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />

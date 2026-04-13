@@ -4,6 +4,11 @@
     <title>Iruha Dev</title>
     <link>http://localhost:1313/</link>
     <description>Recent content on Iruha Dev</description>
+    <image>
+      <title>Iruha Dev</title>
+      <url>http://localhost:1313/images/og-default.png</url>
+      <link>http://localhost:1313/images/og-default.png</link>
+    </image>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 11 Apr 2026 14:55:52 +0700</lastBuildDate>
@@ -13,11 +18,7 @@
       <link>http://localhost:1313/posts/workflow-engine-n8n-works/</link>
       <pubDate>Sat, 11 Apr 2026 14:55:52 +0700</pubDate>
       <guid>http://localhost:1313/posts/workflow-engine-n8n-works/</guid>
-      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;I&amp;rsquo;ve been using n8n for quite some time now and couldn&amp;rsquo;t help wondering how it works under the hood, so I decided to build a minimal working version of the engine myself.
-This post covers how the engine handles execution order, the pluggable node system, expression evaluation, and the diamond merge pattern.&lt;/p&gt;
-&lt;h3 id=&#34;1-what-is-a-workflow-engine&#34;&gt;1. What is a Workflow Engine?&lt;/h3&gt;
-&lt;p&gt;Basically a workflow engine is just a graph where it has 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. These connections between nodes is what define the data flow.&lt;/p&gt;</description>
+      <description>I built a minimal workflow engine in TypeScript from scratch — covering DAG execution with Kahn&amp;#39;s algorithm, pluggable nodes, sandboxed expression evaluation, and the diamond merge pattern.</description>
     </item>
   </channel>
 </rss>
