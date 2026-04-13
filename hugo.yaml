@@ -47,3 +47,7 @@ markup:
     lineNos: false
     noClasses: false # must be false to use external CSS
     style: github-dark # your chosen Chroma theme
+
+services:
+  googleAnalytics:
+    id: G-JE8H5757Q1
