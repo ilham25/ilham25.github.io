@@ -195,7 +195,7 @@ interface NodeExecutionData {
 }
 ```
 
-The first dimension array is for how connections a node have, like for example in this project an `if` node receive 1 data input from `httpRequest` node and output 2 data for its true and false branches. So basically when a node receive a single input (which is most of the time it is), its data is always a single array data inside the connection array. As for the second dimension array (or we can call it inner array) is representing an items that get carried from previous node or get sent to next node, even though previous node or current node receive/sent single item, it must be inside an array no matter what.
+The first dimension array is for how many connections a node have, like for example in this project an `if` node receive 1 data input from `httpRequest` node and output 2 data for its true and false branches. So basically when a node receive a single input (which is most of the time it is), its data is always a single array data inside the connection array. As for the second dimension array (or we can call it inner array) is representing an items that get carried from previous node or get sent to next node, even though previous node or current node receive/sent single item, it must be inside an array no matter what.
 
 Basically here's how the data look like:
 
@@ -290,3 +290,48 @@ Up until this point we only handle a regular workflow without a merging mechanis
 ![Diamond Merge](./img/diamond-merge-pattern.png)
 
 The `merge` node has 2 input slots, how does it know which data belongs to which slot? This is where the `toInputIndex` property from `BaseNodeInput` the same interface we've seen at [The Node System](#3-the-node-system) come in handy. It's a number that tells the engine to which slot of it will end up at the destination node.
+
+### 7. Wiring It All Together
+
+The engine itself is mostly just pure TypeScript logic and doesn't care how it gets triggered. To make it accessible to the frontend demo i wrapped it in an Express server. There are 2 core endpoints, the others is just for frontend need.
+
+1. Execute Workflow
+
+```
+[POST] /workflows/execute
+{
+  "jobId": "string",
+  "workflowId": "string"
+}
+```
+
+2. Track Workflow Job
+
+This is for a Server-Sent Event (SSE)
+
+```
+[GET] /workflows/track/:jobId
+```
+
+The frontend send an execute request with random generated `jobId` and a `workflowId` to know which workflow to execute. You might be wondering, why the `jobId` is generated on the frontend? That's because a race condition will happen when it wait for the backend to sent the `jobId` because i use SSE for the frontend to listen to. So with this solution the frontend can listen to the generated `jobId` first then request the execute after, that way the frontend won't miss any events.
+
+Basically the flows look like this:
+
+1. Frontend fetch workflows data
+2. User click the Execute button
+3. `jobId` get generated and frontend listening to the Track Workflow endpoint (which is an SSE endpoint)
+4. Send `POST` request to execute endpoint with `jobId` and `workflowId` included
+5. The engine executes nodes one by one and sent a callback for each event to the SSE
+6. The frontend receives the event and updates the React Flow node state accordingly
+
+## What I Learned
+
+At first i thought a workflow engine isn't really complicated at its core because to me it looks like just an async function (whole workflow) that have an await request (node) waiting for each others and it turned out to be really wrong. Here i learned that a workflow can't just be completed by a simple ordering logic so each nodes need to be cleared of their dependencies and that's where i learned the Kahn's topological sort which is really match for this kind of logic.
+
+Also i learned about how a JavaScript string code get evaluated, how high the security risk is for this kind of feature and i need to concern about the context i give to the code execution.
+
+On side notes i learned how to use `react-flow` on the frontend side to make a workflow UI similar to n8n, how to make the node on the UI side reusable, making the properties modal for each different type of node, listening to SSE and much more.
+
+## What's Next?
+
+I think for the continuation of this project i will try to tinker around how's the expression input in n8n works, like their autosuggestion, validator, even how the evaluation works on the frontend side.
