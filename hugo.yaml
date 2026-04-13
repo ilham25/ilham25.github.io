@@ -1,4 +1,38 @@
 baseURL: https://example.org/
 locale: en-us
-title: Iruha25
+title: Iruha Dev
 theme: ["PaperMod"]
+params:
+  profileMode:
+    enabled: true
+    title: "Ilham Adiputra" # optional default will be site title
+    subtitle: "Mobile & Fullstack Developer"
+    imageUrl: "images/avatar.png" # optional
+    imageTitle: "Profile Photo" # optional
+    imageWidth: 120 # custom size
+    imageHeight: 120 # custom size
+    buttons:
+      - name: Posts
+        url: "/posts"
+      - name: Resume
+        url: "/resume.pdf"
+      - name: Github
+        url: "https://github.com/ilham25"
+
+  socialIcons: # optional
+    - name: "LinkedIn"
+      url: "https://www.linkedin.com/in/ilham-adiputra"
+    - name: "email"
+      url: "mailto:job.ilhamadiputra4@gmail.com"
+
+  assets:
+    disableHLJS: true
+  footer:
+    text: "[GitHub](https://github.com/ilham25) · [LinkedIn](https://www.linkedin.com/in/ilham-adiputra)"
+markup:
+  highlight:
+    codeFences: true
+    guessSyntax: true
+    lineNos: false
+    noClasses: false # must be false to use external CSS
+    style: github-dark # your chosen Chroma theme
