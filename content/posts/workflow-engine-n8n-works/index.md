@@ -13,17 +13,17 @@ This post covers how the engine handles execution order, the pluggable node syst
 
 ### 1. What is a Workflow Engine?
 
-Basically a workflow engine is just a graph where it have 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. This connections between nodes is what define the data flow.
+Basically a workflow engine is just a graph where it has 2 or more nodes that have individual functions like “fetch this URL” or “check this condition”. These connections between nodes is what define the data flow.
 
-At first i was working with a sample data that have a correct topological order (`node 1 -> node 2 -> node 3`), then come the issue when I try to randomize the node order (`node 3 -> node 1 -> node 2`) and this is the tricky part: **the execution order**. You cannot run a node before it’s dependencies have finished and passed their data forward, where in the original case `node 3` depends on `node 2` but at the second case the `node 2` is executed last and this doesn’t meet `node 3` requirements. That is a simple case, but what happens when you have branches, merges? Figuring out the correct order becomes important.
+At first I was working with a sample data that have a correct topological order (`node 1 -> node 2 -> node 3`), then come the issue when I try to randomize the node order (`node 3 -> node 1 -> node 2`) and this is the tricky part: **the execution order**. You cannot run a node before it’s dependencies have finished and passed their data forward, where in the original case `node 3` depends on `node 2` but at the second case the `node 2` is executed last and this doesn’t meet `node 3` requirements. That is a simple case, but what happens when you have branches, merges? Figuring out the correct order becomes important.
 
 That’s where Directed Acyclic Graph (DAG) concept comes in. Directed because connections always have a direction which is flows in one way and Acyclic because there are no loop because a node cannot eventually depend on itself (ex: `node 1 -> node 2 -> node 3 -> node 1`).
 
 ### 2. Execution Order: Kahn's Algorithm Introduction
 
-Once i know what's the graph structure i decided to use, i needed to figure out how can i produce the correct order and this is where Kahn's algorithm comes in. [I learn it from here.](https://www.youtube.com/watch?v=cIBFEhD77b4)
+Once I knew what's the graph structure I decided to use, I needed to figure out how could I produce the correct order and this is where Kahn's algorithm comes in. [I learn it from here.](https://www.youtube.com/watch?v=cIBFEhD77b4)
 
-Basically every node has an **in-degree** which is the number of incoming connection it has, well let's call it dependencies. A node with 0 in-degree has no dependencies so it is safe to execute. Once a node is finished, we can add it into the correct topological order or queue and remove the dependency of other nodes to this node and the process is looped until all of the node has no dependency and get executed totally. Here's how i implement it:
+Basically every node has an **in-degree** which is the number of incoming connection it has, well let's call it dependencies. A node with 0 in-degree has no dependencies so it is safe to execute. Once a node is finished, we can add it into the correct topological order or queue and remove the dependency of other nodes to this node and the process is looped until all of the node has no dependency and get executed totally. Here's how I implement it:
 
 ```ts
 const queue: NodeType[] = [];
@@ -109,7 +109,7 @@ export type NodeType =
 
 The `execute` method is the heart of it. It receives input data from upstream nodes and returns output data for downstream nodes. That's the only contract the engine needed the most. The `description` is combination for UI stuff and custom parameters a node needed.
 
-Up there you can see `NodeType` is a union type of various type of node, i'll give you some example of how a specific node type interface look like:
+Up there you can see `NodeType` is a union type of various type of node, I'll give you some example of how a specific node type interface look like:
 
 ```ts
 // This is how a basic node type look like
@@ -241,7 +241,7 @@ Basically here's how the data look like:
 
 ### 5. Sandboxed Expression Evaluation
 
-One of the core features that i want to explore and support is the dynamic expression inside node parameters, for example a URL for `httpRequest` node:
+One of the core features that I want to explore and support is the dynamic expression inside node parameters, for example a URL for `httpRequest` node:
 
 ```
 https://jsonplaceholder.typicode.com/users/{{ $json.id }}
@@ -293,7 +293,7 @@ The `merge` node has 2 input slots, how does it know which data belongs to which
 
 ### 7. Wiring It All Together
 
-The engine itself is mostly just pure TypeScript logic and doesn't care how it gets triggered. To make it accessible to the frontend demo i wrapped it in an Express server. There are 2 core endpoints, the others is just for frontend need.
+The engine itself is mostly just pure TypeScript logic and doesn't care how it gets triggered. To make it accessible to the frontend demo I wrapped it in an Express server. There are 2 core endpoints, the others is just for frontend need.
 
 1. Execute Workflow
 
@@ -313,7 +313,7 @@ This is for a Server-Sent Event (SSE)
 [GET] /workflows/track/:jobId
 ```
 
-The frontend send an execute request with random generated `jobId` and a `workflowId` to know which workflow to execute. You might be wondering, why the `jobId` is generated on the frontend? That's because a race condition will happen when it wait for the backend to sent the `jobId` because i use SSE for the frontend to listen to. So with this solution the frontend can listen to the generated `jobId` first then request the execute after, that way the frontend won't miss any events.
+The frontend send an execute request with random generated `jobId` and a `workflowId` to know which workflow to execute. You might be wondering, why the `jobId` is generated on the frontend? That's because a race condition will happen when it wait for the backend to sent the `jobId` because I use SSE for the frontend to listen to. So with this solution the frontend can listen to the generated `jobId` first then request the execute after, that way the frontend won't miss any events.
 
 Basically the flows look like this:
 
@@ -326,12 +326,18 @@ Basically the flows look like this:
 
 ## What I Learned
 
-At first i thought a workflow engine isn't really complicated at its core because to me it looks like just an async function (whole workflow) that have an await request (node) waiting for each others and it turned out to be really wrong. Here i learned that a workflow can't just be completed by a simple ordering logic so each nodes need to be cleared of their dependencies and that's where i learned the Kahn's topological sort which is really match for this kind of logic.
+At first I thought a workflow engine isn't really complicated at its core because to me it looks like just an async function (whole workflow) that have an await request (node) waiting for each others and it turned out to be really wrong. Here I learned that a workflow can't just be completed by a simple ordering logic so each nodes need to be cleared of their dependencies and that's where I learned the Kahn's topological sort which is a really good match for this kind of logic.
 
-Also i learned about how a JavaScript string code get evaluated, how high the security risk is for this kind of feature and i need to concern about the context i give to the code execution.
+Also I learned about how a JavaScript string code get evaluated, how high the security risk is for this kind of feature and I need to concern about the context I give to the code execution.
 
-On side notes i learned how to use `react-flow` on the frontend side to make a workflow UI similar to n8n, how to make the node on the UI side reusable, making the properties modal for each different type of node, listening to SSE and much more.
+On side notes I learned how to use `react-flow` on the frontend side to make a workflow UI similar to n8n, how to make the node on the UI side reusable, making the properties modal for each different type of node, listening to SSE and much more.
+
+Building this gave me a much deeper appreciation for tools like n8n that make all of this complexity invisible to the user, but also that's what makes it interesting for me in the first place.
 
 ## What's Next?
 
-I think for the continuation of this project i will try to tinker around how's the expression input in n8n works, like their autosuggestion, validator, even how the evaluation works on the frontend side.
+I think for the continuation of this project I will try to tinker around how's the expression input in n8n works, like their autosuggestion, validator, even how the evaluation works on the frontend side.
+
+If you have any suggestions or questions, feel free to reach out to me on [LinkedIn](https://www.linkedin.com/in/ilham-adiputra) or open a discussion on the [GitHub repo](https://github.com/ilham25/workflow-ts).
+
+The frontend demo used in this post can be found [here](https://github.com/ilham25/workflow-ts-playground).
